@@ -5,6 +5,7 @@ This file convert the nuScenes annotation into COCO format.
 '''
 import json
 import numpy as np
+import os
 import cv2
 import copy
 import matplotlib.pyplot as plt
@@ -18,9 +19,13 @@ import _init_paths
 from utils.ddd_utils import compute_box_3d, project_to_image, alpha2rot_y
 from utils.ddd_utils import draw_box_3d, unproject_2d_to_3d
 
-DATA_PATH = '../../data/nuscenes/'
+DATA_PATH = '../../data/nuscenes/v1.0-trainval_meta'
 OUT_PATH = DATA_PATH + 'annotations/'
-SPLITS = {'val': 'v1.0-trainval', 'train': 'v1.0-trainval', 'test': 'v1.0-test'}
+SPLITS = {
+          #'val': 'v1.0-trainval', 
+          'train': 'v1.0-trainval', 
+          #'test': 'v1.0-test'
+        }
 DEBUG = False
 CATS = ['car', 'truck', 'bus', 'trailer', 'construction_vehicle', 
                    'pedestrian', 'motorcycle', 'bicycle',
@@ -67,9 +72,11 @@ def main():
   if not os.path.exists(OUT_PATH):
     os.mkdir(OUT_PATH)
   for split in SPLITS:
-    data_path = DATA_PATH + '{}/'.format(SPLITS[split])
+    data_path = DATA_PATH# + '{}/'.format(SPLITS[split])
+    print(data_path)
     nusc = NuScenes(
       version=SPLITS[split], dataroot=data_path, verbose=True)
+    
     out_path = OUT_PATH + '{}.json'.format(split)
     categories_info = [{'name': CATS[i], 'id': i + 1} for i in range(len(CATS))]
     ret = {'images': [], 'annotations': [], 'categories': categories_info, 
