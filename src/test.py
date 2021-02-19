@@ -17,7 +17,8 @@ from logger import Logger
 from utils.utils import AverageMeter
 from dataset.dataset_factory import dataset_factory
 from detector import Detector
-
+import sys
+sys.path.append("./lib/model/networks/DCNv2")
 
 class PrefetchDataset(torch.utils.data.Dataset):
   def __init__(self, opt, dataset, pre_process_func):
@@ -60,6 +61,7 @@ def prefetch_test(opt):
   
   split = 'val' if not opt.trainval else 'test'
   dataset = Dataset(opt, split)
+  opt.device = 'cpu'
   detector = Detector(opt)
   
   if opt.load_results != '':

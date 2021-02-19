@@ -15,6 +15,7 @@ CREATE_SPLITTED_DET = True
 if __name__ == '__main__':
   for split in SPLITS:
     data_path = DATA_PATH + (split if not HALF_VIDEO else 'train')
+    print(data_path)
     out_path = OUT_PATH + '{}.json'.format(split)
     out = {'images': [], 'annotations': [], 
            'categories': [{'id': 1, 'name': 'pedestrain'}],
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     ann_cnt = 0
     video_cnt = 0
     for seq in sorted(seqs):
+      print(seq)
       if '.DS_Store' in seq:
         continue
       if 'mot17' in DATA_PATH and (split != 'test' and not ('FRCNN' in seq)):

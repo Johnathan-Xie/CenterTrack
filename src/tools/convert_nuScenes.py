@@ -5,6 +5,7 @@ This file convert the nuScenes annotation into COCO format.
 '''
 import json
 import numpy as np
+from tqdm import tqdm
 import os
 import cv2
 import copy
@@ -19,10 +20,10 @@ import _init_paths
 from utils.ddd_utils import compute_box_3d, project_to_image, alpha2rot_y
 from utils.ddd_utils import draw_box_3d, unproject_2d_to_3d
 
-DATA_PATH = '../../data/nuscenes/v1.0-trainval_meta'
+DATA_PATH = '../../data/nuscenes/'
 OUT_PATH = DATA_PATH + 'annotations/'
 SPLITS = {
-          #'val': 'v1.0-trainval', 
+          'val': 'v1.0-trainval', 
           'train': 'v1.0-trainval', 
           #'test': 'v1.0-test'
         }
@@ -72,8 +73,7 @@ def main():
   if not os.path.exists(OUT_PATH):
     os.mkdir(OUT_PATH)
   for split in SPLITS:
-    data_path = DATA_PATH# + '{}/'.format(SPLITS[split])
-    print(data_path)
+    data_path = DATA_PATH
     nusc = NuScenes(
       version=SPLITS[split], dataroot=data_path, verbose=True)
     
@@ -86,13 +86,13 @@ def main():
     num_videos = 0
 
     # A "sample" in nuScenes refers to a timestamp with 6 cameras and 1 LIDAR.
-    for sample in nusc.sample:
+    for sample in tqdm(nusc.sample):
       scene_name = nusc.get('scene', sample['scene_token'])['name']
       if not (split in ['mini', 'test']) and \
         not (scene_name in SCENE_SPLITS[split]):
         continue
       if sample['prev'] == '':
-        print('scene_name', scene_name)
+        #print('scene_name', scene_name)
         num_videos += 1
         ret['videos'].append({'id': num_videos, 'file_name': scene_name})
         frame_ids = {k: 0 for k in sample['data']}
